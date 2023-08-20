@@ -19,3 +19,5 @@ mainLoop().catch((error) => {
   console.error('An error occurred:', error);
 });
 console.log('Whats On Arweave: **LIVE**')
+
+.listen(process.env.PORT || 5000)
