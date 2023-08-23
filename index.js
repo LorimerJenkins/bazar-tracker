@@ -1,14 +1,14 @@
 import queryBazar from './queryBazar.js';
-import ping from './ping.js'
+import sendTweet from './sendTweet.js'
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function mainLoop() {
   while (true) {
-    const newTrades = await queryBazar();
+    const newPurchases = await queryBazar();
 
     if (newTrades !== false) {
-      await ping(newTrades)
+      await sendTweet(newPurchases)
     }
 
     await delay(20000);
