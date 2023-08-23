@@ -1,13 +1,11 @@
 {
   "name": "bazar-tracker",
   "version": "1.0.0",
-  "description": "Track recent purchases on bazar.arweave.dev!",
+  "description": "Track recent trades on bazar.arweave.dev!",
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "arweave": "^1.13.7",
     "axios": "^1.4.0",
-    "dotenv": "^16.3.1",
     "heroku-client": "^3.1.0"
   },
   "scripts": {

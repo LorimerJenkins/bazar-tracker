@@ -1,14 +1,14 @@
-import listenForTransactions from './query-arweave.js';
+import queryBazar from './queryBazar.js';
 import ping from './ping.js'
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function mainLoop() {
   while (true) {
-    const transactionTags = await listenForTransactions();
+    const newTrades = await queryBazar();
 
-    if (transactionTags !== false) {
-      await ping(transactionTags)
+    if (newTrades !== false) {
+      await ping(newTrades)
     }
 
     await delay(20000);
@@ -18,5 +18,6 @@ async function mainLoop() {
 mainLoop().catch((error) => {
   console.error('An error occurred:', error);
 });
-console.log('Whats On Arweave: **LIVE**')
+
+console.log('Query Bazar: **LIVE**')
 
