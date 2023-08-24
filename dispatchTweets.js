@@ -14,7 +14,7 @@ async function sendTweet(purchaseData) {
 
     try {
 
-        const message = `${purchaseData.owner} just spent ${purchaseData.price} $U on ${purchaseData.NFTName}, check it out at ${purchaseData.bazarLink}`
+        const message = `${purchaseData.owner} just spent ${purchaseData.price} $U on ${purchaseData.NFTName}! Check it out ${purchaseData.bazarLink}`
 
         const mediaBase64 = purchaseData.data.dataBuffer;
         const mediaId = await twitterClient.v1.uploadMedia(mediaBase64, 
