@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import Heroku from 'heroku-client';
 
 function formatU(tokens) {
     const format = (tokens / 1000000)
@@ -10,6 +10,21 @@ function formatU(tokens) {
 function shortenAddress(address) {
     const shortenedAddress = address.slice(0, 7) + "..." + address.slice(-7);
     return shortenedAddress;
+}
+
+
+
+async function updateHerokuFn(key, value) {
+    const heroku = new Heroku({ token: process.env.HEROKU_API_KEY });
+    const appName = 'query-bazar';
+    const configVars = { [key]: value };
+    try {
+        await heroku.patch(`/apps/${appName}/config-vars`, { body: configVars });
+        return true;
+    } catch (e) {
+        console.log(e);
+        return false;
+    }
 }
 
 
@@ -91,6 +106,8 @@ export default async function queryBazar() {
     if (newTransactions.length === 0) {
          console.log('No new transactions')
         return false
+    } else {
+        await updateHerokuFn('lastIndexedTransactions', currentIndexedTransactions)
     }
 
     
