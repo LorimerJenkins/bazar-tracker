@@ -1,17 +1,19 @@
-import queryBazar from './queryBazar.js';
-import sendTweet from './sendTweet.js'
+import queryBazar from "./queryBazar.js";
+import dispatchTweets from "./dispatchTweets.js";
+
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+
 async function mainLoop() {
   while (true) {
-    const newPurchases = await queryBazar();
+    const purchases = await queryBazar();
 
-    if (newTrades !== false) {
-      await sendTweet(newPurchases)
+    if (purchases) {
+      await dispatchTweets(purchases)
     }
-
-    await delay(20000);
+    
+    await delay(30000);
   }
 }
 

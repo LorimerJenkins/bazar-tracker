@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from "axios";
 
 
 function formatU(tokens) {
@@ -7,22 +7,21 @@ function formatU(tokens) {
 }
 
 
-export default async function queryBazar() {
+function shortenAddress(address) {
+    const shortenedAddress = address.slice(0, 7) + "..." + address.slice(-7);
+    return shortenedAddress;
+}
 
-    const params = {
-        contractId: 'tfalT8Z-88riNtoXdF5ldaBtmsfcSmbMqWLh2DHJIbg',
-        limit: 15,
-        totalCount: true,
-        page: 1
-    };
-    const contract = await axios.get('https://gw.warp.cc/sonar/gateway/interactions-sonar', { params })
-    const latestTransactions = contract.data.interactions
 
-    const latestTxn = latestTransactions[0].interaction
-    const transactionID = latestTxn.id
-    const owner = latestTxn.owner.address
 
-    const latestTxnTags = latestTxn.tags
+async function queryTransaction(transaction) {
+
+    // const transactionID = transaction.id
+
+    const interaction = transaction.interaction
+    const owner = shortenAddress(interaction.owner.address)
+
+    const latestTxnTags = interaction.tags
     let input;
     for (let i = 0; i < latestTxnTags.length; i++) {
         if (latestTxnTags[i].name === 'Input') {
@@ -54,15 +53,59 @@ export default async function queryBazar() {
 
     return {
         'owner': owner,
-        'transactionID': transactionID,
         'price': price,
         'NFTName': NFTName,
         'bazarLink': bazarLink,
-        'NFTID': NFTID,
         'data': { 'dataBuffer': dataBuffer, 'contentType': contentType }
     }
 
 }
 
 
+export default async function queryBazar() {
+
+
+    const lastIndexedTransactions = JSON.parse(process.env.lastIndexedTransactions)
+    const params = {
+        contractId: 'tfalT8Z-88riNtoXdF5ldaBtmsfcSmbMqWLh2DHJIbg',
+        limit: 15,
+        totalCount: true,
+        page: 1
+    };
+    const contract = await axios.get('https://gw.warp.cc/sonar/gateway/interactions-sonar', { params })
+    const latestTransactions = contract.data.interactions
+
+    let currentIndexedTransactions = []
+
+    for (let i = 0; i < latestTransactions.length; i++) {
+        let transactionID = latestTransactions[i].interaction.id
+        currentIndexedTransactions.push(transactionID)
+    }
+
+    let newTransactions = [];
+    for (let value of currentIndexedTransactions) {
+        if(!lastIndexedTransactions.includes(value)) {
+            newTransactions.push(value);
+        }
+    }
+    if (newTransactions.length === 0) {
+         console.log('No new transactions')
+        return false
+    }
+
+    
+    const purchases = []
+    for (let i = 0; i < newTransactions.length; i++) {
+        const transaction = latestTransactions[i]
+        let query = await queryTransaction(transaction)
+        if (query) {
+            purchases.push(query)
+        }
+    }
+
+    return purchases
+
+
+
+}
 
