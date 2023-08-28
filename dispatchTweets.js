@@ -10,6 +10,7 @@ async function getCurrentStreak(walletAddress) {
     let streak = await axios.get(`https://dre-u.warp.cc/contract?id=tfalT8Z-88riNtoXdF5ldaBtmsfcSmbMqWLh2DHJIbg&events=false`);
     try {
         streak = streak.data.state.streaks[walletAddress].days
+        console.log(streak)
         return streak    
     } catch (error) {
         return 0
